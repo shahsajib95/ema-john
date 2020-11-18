@@ -1,18 +1,23 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import './Products.css'
-import { CartsData, ProductsData } from '../../../App';
+import { ProductsData } from '../../../App';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 import Rating from 'react-rating';
+import Pagination from './Pagination/Pagination';
 
-const Products = ({handleProduct}) => {
+const Products = ({ handleProduct }) => {
     const [products, setProducts] = useContext(ProductsData)
-    
-    const filteredProducts = products.slice(0, 10)
+    const [postPerPage, setPostPerPage] = useState(10)
+    const [currentPage, setCurrentpage] = useState(1)
+    const indexOfLastPost = currentPage * postPerPage;
+    const indexofFirstPost = indexOfLastPost - postPerPage;
+    const currentPosts = products.slice(indexofFirstPost, indexOfLastPost)
 
+    const paginate = pageNumber => setCurrentpage(pageNumber)
     return (
         <div>
-            {filteredProducts.map(products =>
+            {currentPosts.map(products =>
                 <div key={products._id} className="products d-flex display-content-between p-3 mt-3">
                     <div>
                         <img style={{ height: '200px' }} src={products.img} alt="" />
@@ -30,10 +35,11 @@ const Products = ({handleProduct}) => {
                             initialRating={products.star}
                         />
                         <h6 className="mt-3">Price: <strong>${products.price}</strong></h6>
-                        <button className="btn btn-warning w-25 mt-5" onClick={()=>handleProduct(products)}>Buy Now</button>
+                        <button className="btn btn-warning w-25 mt-5" onClick={() => handleProduct(products)}>Buy Now</button>
                     </div>
                 </div>
             )}
+            <Pagination postPerPage={postPerPage} totalPosts={products.length} paginate={paginate} />
         </div>
     );
 };

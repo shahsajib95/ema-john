@@ -1,11 +1,33 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserCircle, faSearch, faCartArrowDown } from '@fortawesome/free-solid-svg-icons'
-import { CartsData } from '../../../App';
+import { CartInfo, CartsData, ProductsData } from '../../../App';
 import { Link } from 'react-router-dom';
 
 const Navbar = () => {
-    const [finalCart, setFinalCart] = useContext(CartsData)
+    const [products, setProducts] = useContext(ProductsData)
+    const [cart, setCart] = useContext(CartInfo)
+    const [search, setSeacrh] = useState('')
+    const [valueText, setValueText] = useState('');
+
+    useEffect(() => {
+        (async() => {
+            fetch(`http://localhost:5000/products?search=` + search)
+            .then(res => res.json())
+            .then(result => setProducts(result))
+        })()
+    }, [search])
+
+    const handleBlur = (e) => {
+        const searchData = e.target.value
+        setValueText(searchData)
+        
+    }
+    const handleSubmit = () => {
+        setSeacrh(valueText)
+        setValueText()
+    }
+
     return (
         <div>
             <nav className="navbar navbar-expand-lg navbar-light p-3">
@@ -16,7 +38,7 @@ const Navbar = () => {
                 <div className="collapse navbar-collapse" id="navbarNavDropdown">
                     <ul className="navbar-nav ml-auto">
                         <li className="nav-item active ml-3">
-                            <Link className="nav-link" to="/">Home <span className="sr-only">(current)</span></Link>
+                            <a className="nav-link" href="/">Home <span className="sr-only">(current)</span></a>
                         </li>
                         <li className="nav-item ml-3">
                             <Link className="nav-link" to="/">Features</Link>
@@ -35,13 +57,18 @@ const Navbar = () => {
                             </div>
                         </li>
                         <li className="nav-item ml-3">
-                            <Link className="nav-link" to="/"><FontAwesomeIcon icon={faUserCircle} /></Link>
+                            <Link className="nav-link" to="/">
+                                <FontAwesomeIcon icon={faUserCircle} />
+                            </Link>
                         </li>
                         <li className="nav-item ml-3">
-                            <Link className="nav-link" to="/"><FontAwesomeIcon icon={faSearch} /></Link>
+                            <Link className="nav-link" to="/">
+                                <input onBlur={handleBlur} placeholder="search" />
+                                <FontAwesomeIcon className="ml-2" icon={faSearch} onClick={handleSubmit} />
+                            </Link>
                         </li>
                         <li className="nav-item ml-3">
-    <a className="nav-link" href="/cart"><FontAwesomeIcon icon={faCartArrowDown} /><span className="ml-2 text-warning">{finalCart.length}</span></a>
+                            <a className="nav-link" href="/cart"><FontAwesomeIcon icon={faCartArrowDown} /><span className="ml-2 text-warning">{cart.length}</span></a>
                         </li>
                     </ul>
                 </div>
