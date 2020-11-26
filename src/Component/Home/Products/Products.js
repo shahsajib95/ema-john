@@ -5,16 +5,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 import Rating from 'react-rating';
 import Pagination from './Pagination/Pagination';
+import { Link } from 'react-router-dom';
 
 const Products = ({ handleProduct }) => {
-    const [products, setProducts] = useContext(ProductsData)
+    const [products] = useContext(ProductsData)
     const [postPerPage, setPostPerPage] = useState(10)
     const [currentPage, setCurrentpage] = useState(1)
     const indexOfLastPost = currentPage * postPerPage;
     const indexofFirstPost = indexOfLastPost - postPerPage;
     const currentPosts = products.slice(indexofFirstPost, indexOfLastPost)
-
     const paginate = pageNumber => setCurrentpage(pageNumber)
+
     return (
         <div>
             {currentPosts.map(products =>
@@ -23,7 +24,7 @@ const Products = ({ handleProduct }) => {
                         <img style={{ height: '200px' }} src={products.img} alt="" />
                     </div>
                     <div className="ml-4">
-                        <h5>{products.name}</h5>
+                        <Link to={"/product/"+products.key}><h5>{products.name}</h5></Link>
                         <div className="d-flex display-content-around">
                             <p className="text-warning">{products.seller}</p>
                             <p className="ml-3">Categoty: {products.category}</p>

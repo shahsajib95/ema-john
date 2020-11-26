@@ -11,17 +11,6 @@ const Cart = () => {
     const shipping = total / 20
 
 
-    useEffect(() => {
-        if (products.length) {
-            const cartPd = cart.map(id => {
-                const product = products.find(pd => pd._id === id._id)
-                product.quantity = id.count
-                return product;
-            })
-            setFinalCart(cartPd)
-        }
-    }, [products])
-
     const finalCartPlus = (quantity, id) => {
         const product = products.find(prod => prod._id === id)
         const _id = product._id
@@ -40,7 +29,7 @@ const Cart = () => {
         const _id = product._id
         quantity = product.quantity
         product.quantity = quantity <= 1 ? 1 : quantity - 1
-        setQntity(product.quantity)
+        setQntity(JSON.parse(product.quantity))
         fetch('http://localhost:5000/decreaseCart', {
             method: 'PATCH',
             headers: { 'content-type': 'application/json' },
@@ -52,6 +41,7 @@ const Cart = () => {
         const _id = id;
         const removePd = finalCart.filter(pd=> pd._id !== id)
         setFinalCart(removePd)
+        setCart(removePd)
         fetch('http://localhost:5000/deleteProduct',{
             method: 'DELETE',
             headers: { 'content-type' : 'application/json'},
